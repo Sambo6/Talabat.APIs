@@ -21,4 +21,3 @@ namespace Talabat.Core.Entities
 
     }
 }
-p
