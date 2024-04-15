@@ -27,7 +27,7 @@ namespace Talabat.APIs
 
             webApplicationBuilder.Services.AddDbContext<StoreContext>(options =>
             {
-                options.UseSqlServer(webApplicationBuilder.Configuration.GetConnectionString("DefaultConnection"));
+                options.UseLazyLoadingProxies().UseSqlServer(webApplicationBuilder.Configuration.GetConnectionString("DefaultConnection"));
             }
                 );
             //For All [Product- productBrand- productCategory]
