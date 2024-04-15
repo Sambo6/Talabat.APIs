@@ -8,16 +8,16 @@ namespace Talabat.Core.Entities
 {
     public class Product : BaseEntity
     {
-        public string Name { get; set; }
-        public string  Description { get; set; }
+        public string Name { get; set; } = null!;
+        public string Description { get; set; } = null!;
+        public string PictureUrl { get; set; } = null!;
         public decimal Price { get; set; }
-        public string PictureUrl { get; set; }
 
-        public int ProductBrandId { get; set; } //Foreign key
-        public ProductBrand Brand { get; set; } //Navigational property [One]
+        public int BrandId { get; set; } // FK : ProductBrand
+        public ProductBrand Brand { get; set; } = null!; // Navigational Property [ONE]
 
-        public int ProductCategoryId { get; set; } //Foreign key
-        public ProductCategory Category { get; set; } //Navigational property [One]
+        public int CategoryId { get; set; } // FK : ProductCategory
+        public ProductCategory Category { get; set; } = null!; // Navigational Property [ONE]
 
     }
 }
