@@ -38,7 +38,7 @@ namespace Talabat.Repository
         }
 
 
-        public async Task<IEnumerable<T>> GitAllWithSpecAsync(ISpecifications<T> spec)
+        public async Task<IEnumerable<T>> GetAllWithSpecAsync(ISpecifications<T> spec)
         {
             return await ApplySpecifications(spec).AsNoTracking().ToListAsync();
         }
