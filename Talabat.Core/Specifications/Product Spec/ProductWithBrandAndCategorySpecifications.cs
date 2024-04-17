@@ -8,18 +8,24 @@ using Talabat.Core.Entities;
 
 namespace Talabat.Core.Specifications.Product_Spec
 {
-    public class ProductWithBrandAndCategorySpecifications :BaseSpecifications<Product>
+    public class ProductWithBrandAndCategorySpecifications : BaseSpecifications<Product>
     {
         // this ctor use to create an Object  which Used to Get all products
-        public ProductWithBrandAndCategorySpecifications():base()
+        public ProductWithBrandAndCategorySpecifications() : base()
         {
-            Includes.Add(p => p.Brand);
-            Includes.Add(p => p.Category);
+            AddIncludes();
         }
-        public ProductWithBrandAndCategorySpecifications(Expression<Func<Product, bool>> criteria)
-            : this()
+        // this ctor use to create an Specific Object  which Used to Get products ById
+        public ProductWithBrandAndCategorySpecifications(int id)
+                    : base(P => P.Id == id)
         {
-            Criteria = criteria;
+            AddIncludes();
+        }
+        private void AddIncludes()
+        {
+            Includes.Add(P => P.Brand);
+            Includes.Add(P => P.Category);
+
         }
     }
 }
