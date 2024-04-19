@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Talabat.APIs.Helpers;
 using Talabat.Core.Entities;
 using Talabat.Core.Repositories.Contract;
 using Talabat.Repository;
@@ -32,6 +33,8 @@ namespace Talabat.APIs
                 );
             //For All [Product- productBrand- productCategory]
             webApplicationBuilder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+            webApplicationBuilder.Services.AddAutoMapper(typeof(MappingProfiles));
 
             #endregion
 
