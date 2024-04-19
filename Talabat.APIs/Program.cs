@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Talabat.APIs.Errors;
 using Talabat.APIs.Helpers;
+using Talabat.APIs.Middleware;
 using Talabat.Core.Entities;
 using Talabat.Core.Repositories.Contract;
 using Talabat.Repository;
@@ -91,7 +92,9 @@ namespace Talabat.APIs
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.MapControllers(); 
+            app.MapControllers();
+
+            app.UseMiddleware<ExceptionMiddleware>();
             #endregion
 
             app.Run();
