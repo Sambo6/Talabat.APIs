@@ -11,9 +11,27 @@ namespace Talabat.Core.Specifications.Product_Spec
     public class ProductWithBrandAndCategorySpecifications : BaseSpecifications<Product>
     {
         // this ctor use to create an Object  which Used to Get all products
-        public ProductWithBrandAndCategorySpecifications() : base()
+        public ProductWithBrandAndCategorySpecifications(string sort) : base()
         {
             AddIncludes();
+
+            if (!string.IsNullOrEmpty(sort))
+            {
+                switch(sort)
+                {
+                    case "priceAsc":
+                        AddOrderBy(p => p.Price); break;
+                    case "priceDesc":
+                        AddOrderByDesc(p => p.Price); break;
+                    default:
+                        AddOrderBy(p => p.Name);
+                        break;
+                }
+            }
+            else
+            {
+                AddOrderBy(p => p.Name);
+            }
         }
         // this ctor use to create an Specific Object  which Used to Get products ById
         public ProductWithBrandAndCategorySpecifications(int id)
