@@ -12,9 +12,9 @@ namespace Talabat.Core.Specifications.Product_Spec
     {
         // this ctor use to create an Object  which Used to Get all products
         public ProductWithBrandAndCategorySpecifications(ProductSpecParams specParams) : base(P =>
-
+                                           (string.IsNullOrEmpty(specParams.Search) || P.Name.ToLower().Contains(specParams.Search) &&
                                            (!specParams.BrandId.HasValue || P.BrandId == specParams.BrandId.Value) &&
-                                           (!specParams.CategoryId.HasValue || P.CategoryId == specParams.CategoryId.Value))
+                                           (!specParams.CategoryId.HasValue || P.CategoryId == specParams.CategoryId.Value)))
         {
             AddIncludes();
 
