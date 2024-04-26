@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 using System.Net;
 using System.Text.Json;
 using Talabat.APIs.Errors;
@@ -36,6 +37,11 @@ namespace Talabat.APIs
                 options.UseLazyLoadingProxies().UseSqlServer(webApplicationBuilder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            webApplicationBuilder.Services.AddSingleton<IConnectionMultiplexer>((ServiceProvider) => 
+            {
+                var connection = webApplicationBuilder.Configuration.GetConnectionString("redis");
+                return ConnectionMultiplexer.Connect(connection);
+            });
             webApplicationBuilder.Services.ApplicationServices();
 
             #endregion
