@@ -4,6 +4,7 @@ using System.Collections;
 using Talabat.APIs.Errors;
 using Talabat.APIs.Helpers;
 using Talabat.Core.Repositories.Contract;
+using Talabat.Infrastructure;
 using Talabat.Repository;
 
 namespace Talabat.APIs.Extensions
@@ -14,7 +15,7 @@ namespace Talabat.APIs.Extensions
         {
             //For All [Product- productBrand- productCategory]
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-
+            services.AddScoped(typeof(IBasketRepository), typeof(BasketRepository));
             services.AddAutoMapper(typeof(MappingProfiles));
             services.Configure<ApiBehaviorOptions>(options =>
             {
