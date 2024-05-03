@@ -6,8 +6,10 @@ using System.Text.Json;
 using Talabat.APIs.Errors;
 using Talabat.APIs.Extensions;
 using Talabat.Core.Entities.Identity;
+using Talabat.Core.Services.Contract;
 using Talabat.Infrastructure.Identity;
 using Talabat.Repository.Data;
+using Talabat.Service.AuthService;
 
 namespace Talabat.APIs
 {
@@ -46,7 +48,7 @@ namespace Talabat.APIs
 
 			webApplicationBuilder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 										  .AddEntityFrameworkStores<ApplicationIdentityDbContext>();
-
+			webApplicationBuilder.Services.AddScoped(typeof(IAuthService), typeof(AuthService)); 
 			webApplicationBuilder.Services.ApplicationServices();
 
 			#endregion
