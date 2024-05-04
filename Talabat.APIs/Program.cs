@@ -1,19 +1,14 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.Net;
-using System.Text;
 using System.Text.Json;
 using Talabat.APIs.Errors;
 using Talabat.APIs.Extensions;
 using Talabat.Core.Entities.Identity;
-using Talabat.Core.Services.Contract;
 using Talabat.Infrastructure.Identity;
 using Talabat.Repository.Data;
-using Talabat.Service.AuthService;
 
 namespace Talabat.APIs
 {
@@ -30,6 +25,12 @@ namespace Talabat.APIs
 			// Add services to the container.
 
 			webApplicationBuilder.Services.AddControllers();
+
+			//Newtons Package User to Stop Nested looping Between 2 Entities
+				/*.AddNewtonsoftJson(options =>
+			{
+				options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+			});*/
 
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
