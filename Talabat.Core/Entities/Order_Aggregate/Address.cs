@@ -1,18 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Talabat.APIs.Dtos
+﻿namespace Talabat.Core.Entities.Order_Aggregate
 {
-	public class AddressDto
+	public class Address
 	{
-		[Required]
 		public string FirstName { get; set; } = null!;
-		[Required]
 		public string LastName { get; set; } = null!;
-		[Required]
 		public string Street { get; set; } = null!;
-		[Required]
 		public string City { get; set; } = null!;
-		[Required]
 		public string Country { get; set; } = null!;
 	}
 }
