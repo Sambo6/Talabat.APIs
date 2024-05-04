@@ -1,119 +1,137 @@
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 using System.Net;
 using System.Text.Json;
 using Talabat.APIs.Errors;
 using Talabat.APIs.Extensions;
-using Talabat.APIs.Helpers;
-using Talabat.APIs.Middleware;
-using Talabat.Core.Entities;
-using Talabat.Core.Repositories.Contract;
-using Talabat.Repository;
+using Talabat.Core.Entities.Identity;
+using Talabat.Infrastructure.Identity;
 using Talabat.Repository.Data;
 
 namespace Talabat.APIs
 {
-    public class Program
-    {
-        //Entry point
-        public static async Task Main(string[] args)
-        {
+	public class Program
+	{
+		//Entry point
+		public static async Task Main(string[] args)
+		{
 
 
-            var webApplicationBuilder = WebApplication.CreateBuilder(args);
+			var webApplicationBuilder = WebApplication.CreateBuilder(args);
 
-            #region Configure Services
-            // Add services to the container.
+			#region Configure Services
+			// Add services to the container.
 
-            webApplicationBuilder.Services.AddControllers();
+			webApplicationBuilder.Services.AddControllers();
 
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+			//Newtons Package User to Stop Nested looping Between 2 Entities
+				/*.AddNewtonsoftJson(options =>
+			{
+				options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+			});*/
 
-            webApplicationBuilder.Services.SwaggerServices();
+			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
-             webApplicationBuilder.Services.AddDbContext<StoreContext>(options =>
-            {
-                options.UseLazyLoadingProxies().UseSqlServer(webApplicationBuilder.Configuration.GetConnectionString("DefaultConnection"));
-            });
+			webApplicationBuilder.Services.SwaggerServices();
 
-            webApplicationBuilder.Services.AddSingleton<IConnectionMultiplexer>((ServiceProvider) => 
-            {
-                var connection = webApplicationBuilder.Configuration.GetConnectionString("redis");
-                return ConnectionMultiplexer.Connect(connection);
-            });
-            webApplicationBuilder.Services.ApplicationServices();
+			webApplicationBuilder.Services.AddDbContext<StoreContext>(options =>
+			{
+				options.UseLazyLoadingProxies().UseSqlServer(webApplicationBuilder.Configuration.GetConnectionString("DefaultConnection"));
+			});
 
-            #endregion
+			webApplicationBuilder.Services.AddDbContext<ApplicationIdentityDbContext>(options =>
+			{
+				options.UseSqlServer(webApplicationBuilder.Configuration.GetConnectionString("IdentityConnection"));
+			});
+			webApplicationBuilder.Services.AddSingleton<IConnectionMultiplexer>((ServiceProvider) =>
+			{
+				var connection = webApplicationBuilder.Configuration.GetConnectionString("redis");
+				return ConnectionMultiplexer.Connect(connection);
+			});
 
-            var app = webApplicationBuilder.Build();
+			webApplicationBuilder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+										  .AddEntityFrameworkStores<ApplicationIdentityDbContext>();
+
+			webApplicationBuilder.Services.ApplicationServices();
+
+			webApplicationBuilder.Services.AddAuthServices(webApplicationBuilder.Configuration);
+			
+			#endregion
+
+			var app = webApplicationBuilder.Build();
 
 
 
 
-            #region Update Database Dynamic
-            var Scope = app.Services.CreateScope();
-            var services = Scope.ServiceProvider;
-            var _dbContext = services.GetRequiredService<StoreContext>();
-            // Ask CLR for creating object from DbContext [Explicitly]
+			#region Update Database Dynamic
+			var Scope = app.Services.CreateScope();
+			var services = Scope.ServiceProvider;
+			var _dbContext = services.GetRequiredService<StoreContext>();
+			// Ask CLR for creating object from DbContext [Explicitly]
+			var _IdentityDbContext = services.GetRequiredService<ApplicationIdentityDbContext>();
 
-            var loggerFactory = services.GetRequiredService<ILoggerFactory>();
-                var logger = loggerFactory.CreateLogger<Program>();
-            try
-            {
-                 await _dbContext.Database.MigrateAsync(); //Update DataBase
-                await StoreContextSeeding.SeedAsync(_dbContext);  // Data Seeding
+			var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+			var logger = loggerFactory.CreateLogger<Program>();
+			try
+			{
+				await _dbContext.Database.MigrateAsync(); //Update DataBase
+				await StoreContextSeeding.SeedAsync(_dbContext);  // Data Seeding
 
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "An error has been occurred during apply Migration");
-            }
-            #endregion
+				await _IdentityDbContext.Database.MigrateAsync();  //Update DataBase
 
-            #region Kestrel Middlewares
-            // Configure the HTTP request pipeline.
+				var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+				await ApplicationIdentityContextSeed.SeedUsersAsync(userManager);
+			}
+			catch (Exception ex)
+			{
+				logger.LogError(ex, "An error has been occurred during apply Migration");
+			}
+			#endregion
 
-            ///1. ByConvention Based
-            //app.UseMiddleware<ExceptionMiddleware>();
+			#region Kestrel Middlewares
+			// Configure the HTTP request pipeline.
 
-            ///2.Factory Based
-            app.Use(async (httpContext, _next) =>
-            {
-                try
-                {
-                    //take an action with the request
-                    await _next.Invoke(httpContext); // Go to next middleware
-                                                     //take an action with the response
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex.Message); // Development env
-                    httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    httpContext.Response.ContentType = "application/json";
-                    var response = app.Environment.IsDevelopment() ? new ApiExceptionResponse((int)HttpStatusCode.InternalServerError, ex.Message, ex.StackTrace.ToString()) :
-                    new ApiExceptionResponse((int)HttpStatusCode.InternalServerError);
-                    var options = new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-                    var json = JsonSerializer.Serialize(response, options);
-                    await httpContext.Response.WriteAsync(json);
-                }
+			///1. ByConvention Based
+			//app.UseMiddleware<ExceptionMiddleware>();
 
-            });
+			///2.Factory Based
+			app.Use(async (httpContext, _next) =>
+			{
+				try
+				{
+					//take an action with the request
+					await _next.Invoke(httpContext); // Go to next middleware
+													 //take an action with the response
+				}
+				catch (Exception ex)
+				{
+					logger.LogError(ex.Message); // Development env
+					httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+					httpContext.Response.ContentType = "application/json";
+					var response = app.Environment.IsDevelopment() ? new ApiExceptionResponse((int)HttpStatusCode.InternalServerError, ex.Message, ex.StackTrace.ToString()) :
+					new ApiExceptionResponse((int)HttpStatusCode.InternalServerError);
+					var options = new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+					var json = JsonSerializer.Serialize(response, options);
+					await httpContext.Response.WriteAsync(json);
+				}
 
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwaggerMiddleware();
-            }
+			});
 
-            app.UseStatusCodePagesWithReExecute("/errors/{0}");
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
+			if (app.Environment.IsDevelopment())
+			{
+				app.UseSwaggerMiddleware();
+			}
 
-            app.MapControllers();
-            
-            #endregion
+			app.UseStatusCodePagesWithReExecute("/errors/{0}");
+			app.UseHttpsRedirection();
+			app.UseStaticFiles();
 
-            app.Run();
-        }
-    }
+			app.MapControllers();
+
+			#endregion
+
+			app.Run();
+		}
+	}
 }
