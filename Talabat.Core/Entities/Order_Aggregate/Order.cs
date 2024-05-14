@@ -16,10 +16,10 @@ namespace Talabat.Core.Entities.Order_Aggregate
         public DeliveryMethod DeliveryMethod { get; set; } = null!;
         public ICollection<OrderItem> Items { get; set; } = new HashSet<OrderItem>();
 		public String PaymentIntentId { get; set; } = string.Empty;
-		public decimal SubTotal { get; set; }
+		public decimal Subtotal { get; set; }
         //[NotMapped]
         //public decimal Total => SubTotal + DeliveryMethod.Cost;
         // =================================
-		public decimal GetTotal => SubTotal + DeliveryMethod.Cost;
+		public decimal GetTotal => Subtotal + DeliveryMethod.Cost;
     }
 }

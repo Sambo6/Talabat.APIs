@@ -89,7 +89,7 @@ namespace Talabat.APIs.Controllers
 		{
 
 			var user = await _userManager.FindUserWithAddressAsync(User);
-			return Ok(_mapper.Map<AddressDto>(user.Address));
+			return Ok(_mapper.Map<AddressDto>(user?.Address));
 		}
 		[Authorize]
 		[HttpPut("address")]
