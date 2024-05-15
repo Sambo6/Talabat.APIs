@@ -1,16 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Talabat.Core;
 using Talabat.Core.Entities;
 
 namespace Talabat.Infrastructure
 {
-    internal class SpecificationEvaluator<TEntity> where TEntity : BaseEntity
+	internal class SpecificationEvaluator<TEntity> where TEntity : BaseEntity
     {
         public static IQueryable<TEntity>  GetQuery(IQueryable<TEntity> inputQuery, ISpecifications<TEntity> spec)
         {

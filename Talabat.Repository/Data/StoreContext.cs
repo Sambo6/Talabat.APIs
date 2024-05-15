@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using Talabat.Core.Entities;
-using Talabat.Core.Entities.Order_Aggregate;
 
 namespace Talabat.Repository.Data
 {
