@@ -21,7 +21,8 @@ namespace Talabat.Infrastructure
 
 		public IGenericRepository<TEntity> Repository<TEntity>() where TEntity : BaseEntity
 		{
-			var key = typeof(TEntity).Name;
+			var key = typeof(TEntity).Name; // Order
+
 			if (!_repositories.ContainsKey(key))
 			{
 				var repository = new GenericRepository<TEntity>(_dbContext);
