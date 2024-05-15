@@ -8,7 +8,7 @@ using Talabat.Repository.Data;
 
 namespace Talabat.Infrastructure
 {
-	internal class UnitOfWork : IUnitOfWork
+	public class UnitOfWork : IUnitOfWork
 	{
 		private readonly StoreContext _dbContext;
 		private Hashtable _repositories;
