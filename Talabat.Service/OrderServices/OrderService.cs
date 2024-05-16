@@ -69,7 +69,7 @@ namespace Talabat.Application.OrderServices
 		{
 			var orderRepo = _unitOfWork.Repository<Order>();
 			var orderSpec = new OrderSpecifications(orderId, buyerEmail);
-			var order = orderRepo.GetWithSpecAsync(orderSpec);
+			var order = orderRepo.GetByIdWithSpecAsync(orderSpec);
 			return order;
 		}
 
