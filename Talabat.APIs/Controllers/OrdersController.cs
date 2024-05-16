@@ -20,7 +20,6 @@ namespace Talabat.APIs.Controllers
 		}
 		[ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
 		//[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-
 		[HttpPost]
 		public async Task<ActionResult<Order>> CreateOrder(OrderDto orderDto)
 		{
@@ -40,5 +39,17 @@ namespace Talabat.APIs.Controllers
 
 			return Ok(orders);
 		}
+
+		[HttpGet("{id}")]
+		[ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<Order>> GetOrderForUser(string email, int id)
+		{
+			var order = await _orderService.GetOrderByIdForUserAsync(email, id);
+			if (order is null)
+				return NotFound(new ApiResponse(404));
+			return Ok(order);
+		}
+
 	}
 }
