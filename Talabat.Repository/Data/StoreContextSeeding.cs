@@ -13,6 +13,7 @@ namespace Talabat.Repository.Data
     {
         public async static Task SeedAsync(StoreContext _dbContext)
         {
+
             #region ProductBrands Data Seeding
             if (!_dbContext.ProductBrands.Any())
             {
