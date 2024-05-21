@@ -1,11 +1,16 @@
 ﻿using StackExchange.Redis;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Talabat.Core.Entities;
 using Talabat.Core.Repositories.Contract;
 
 namespace Talabat.Infrastructure
 {
-	public class BasketRepository : IBasketRepository
+    public class BasketRepository : IBasketRepository
     {
         private readonly IDatabase _dataBase;
         public BasketRepository(IConnectionMultiplexer redis)

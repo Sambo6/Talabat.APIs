@@ -1,4 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Talabat.Core;
 using Talabat.Core.Entities;
 using Talabat.Core.Repositories.Contract;
@@ -7,7 +12,7 @@ using Talabat.Repository.Data;
 
 namespace Talabat.Repository
 {
-	public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
+    public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
         private readonly StoreContext _dbContext;
 
@@ -24,7 +29,7 @@ namespace Talabat.Repository
             return await _dbContext.Set<T>().ToListAsync();
         }
 
-        public async Task<T?> GetByIdAsync(int id)
+        public async Task<T?> GetAsync(int id)
         {
             ///if (typeof(T) == typeof(Product))
             ///    return await _dbContext.Set<Product>().Where(p => p.Id == id).Include(p => p.Brand).Include(p => p.Category).FirstOrDefaultAsync() as T;
@@ -37,7 +42,7 @@ namespace Talabat.Repository
         {
             return await ApplySpecifications(spec).AsNoTracking().ToListAsync();
         }
-        public async Task<T?> GetByIdWithSpecAsync(ISpecifications<T> spec)
+        public async Task<T?> GetWithSpecAsync(ISpecifications<T> spec)
         {
             return await ApplySpecifications(spec).FirstOrDefaultAsync();
         }
@@ -51,14 +56,5 @@ namespace Talabat.Repository
         {
             return SpecificationEvaluator<T>.GetQuery(_dbContext.Set<T>(), spec);
         }
-
-		public void Add(T entity)
-		=> _dbContext.Set<T>().Add(entity);
-
-		public void Update(T entity)
-		=> _dbContext.Set<T>().Update(entity);
-
-		public void Delete(T entity)
-		=> _dbContext.Set<T>().Remove(entity);
-	}
+    }
 }

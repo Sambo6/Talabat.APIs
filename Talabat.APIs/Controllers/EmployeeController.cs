@@ -32,7 +32,7 @@ namespace Talabat.APIs.Controllers
         {
             var spec = new EmployeeWithDepartmentSpecifications(id);
 
-            var employee = await _employeeRepo.GetByIdWithSpecAsync(spec);
+            var employee = await _employeeRepo.GetWithSpecAsync(spec);
 
             if (employee == null)
                 return NotFound(new ApiResponse(404));

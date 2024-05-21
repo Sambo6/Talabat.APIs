@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Talabat.APIs.Errors;
 using Talabat.Repository.Data;
 
 namespace Talabat.APIs.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class BuggyController : ControllerBase
     {

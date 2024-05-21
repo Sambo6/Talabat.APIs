@@ -37,7 +37,7 @@ namespace Talabat.APIs
 
 			webApplicationBuilder.Services.AddDbContext<StoreContext>(options =>
 			{
-				options.UseSqlServer(webApplicationBuilder.Configuration.GetConnectionString("DefaultConnection"));
+				options.UseLazyLoadingProxies().UseSqlServer(webApplicationBuilder.Configuration.GetConnectionString("DefaultConnection"));
 			});
 
 			webApplicationBuilder.Services.AddDbContext<ApplicationIdentityDbContext>(options =>
@@ -65,8 +65,7 @@ namespace Talabat.APIs
 
 
 			#region Update Database Dynamic
-
-			using var Scope = app.Services.CreateScope();
+			var Scope = app.Services.CreateScope();
 			var services = Scope.ServiceProvider;
 			var _dbContext = services.GetRequiredService<StoreContext>();
 			// Ask CLR for creating object from DbContext [Explicitly]

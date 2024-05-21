@@ -20,10 +20,4 @@
     <ProjectReference Include="..\Talabat.Service\Talabat.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Identity\config\" />
-    <Folder Include="Identity\Data Seed\" />
-    <Folder Include="Identity\Migrations\" />
-  </ItemGroup>
-
 </Project>
