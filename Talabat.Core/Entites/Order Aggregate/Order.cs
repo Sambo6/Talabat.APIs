@@ -9,25 +9,22 @@ namespace Talabat.Core.Entities.Order_Aggregate
 {
 	public class Order : BaseEntity
 	{
-  //      private Order()
-  //      {
-            
-  //      }
-  //      public Order(string buyerEmail, Address shippingAddress, int? deliveryMethodId, ICollection<OrderItem> items, decimal subTotal)
-		//{
-		//	BuyerEmail = buyerEmail;
-		//	ShippingAddress = shippingAddress;
-		//	DeliveryMethodId = deliveryMethodId;
-		//	Items = items;
-		//	SubTotal = subTotal;
-		//}
+		private Order() {} // Must Create Parameterliess ctor for EF Core [Migration]
+		public Order(string buyerEmail, Address shippingAddress, int? deliveryMethodId, ICollection<OrderItem> items, decimal subTotal)
+		{
+			BuyerEmail = buyerEmail;
+			ShippingAddress = shippingAddress;
+			DeliveryMethodId= deliveryMethodId;
+			Items = items;
+			Subtotal = subTotal;
+		}
 
 		public string BuyerEmail { get; set; } = null!;
 		public DateTimeOffset OrderDate { get; set; } = DateTimeOffset.UtcNow;
 		public OrderStatus Status { get; set; } = OrderStatus.Pending;
 		public Address ShippingAddress { get; set; } = null!;
 
-        //public int DeliveryMethodId { get; set; } //Forign Key
+        public int? DeliveryMethodId { get; set; } //Forign Key
         public DeliveryMethod? DeliveryMethod { get; set; } = null!; //Navigational property[One]
 		public ICollection<OrderItem> Items { get; set; } = new HashSet<OrderItem>();
 		public decimal Subtotal { get; set; }
