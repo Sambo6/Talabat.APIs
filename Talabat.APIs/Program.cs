@@ -37,7 +37,7 @@ namespace Talabat.APIs
 
 			webApplicationBuilder.Services.AddDbContext<StoreContext>(options =>
 			{
-				options.UseLazyLoadingProxies().UseSqlServer(webApplicationBuilder.Configuration.GetConnectionString("DefaultConnection"));
+				options.UseSqlServer(webApplicationBuilder.Configuration.GetConnectionString("DefaultConnection"));
 			});
 
 			webApplicationBuilder.Services.AddDbContext<ApplicationIdentityDbContext>(options =>
@@ -60,9 +60,6 @@ namespace Talabat.APIs
 			#endregion
 
 			var app = webApplicationBuilder.Build();
-
-
-
 
 			#region Update Database Dynamic
 			var Scope = app.Services.CreateScope();
