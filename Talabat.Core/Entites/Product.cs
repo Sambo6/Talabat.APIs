@@ -17,7 +17,7 @@ namespace Talabat.Core.Entities
         public virtual ProductBrand Brand { get; set; } = null!; // Navigational Property [ONE]
 
         public int CategoryId { get; set; } // FK : ProductCategory
-        public virtual ProductCategory Category { get; set; } = null!; // Navigational Property [ONE]
+        public  ProductCategory Category { get; set; } = null!; // Navigational Property [ONE]
 
     }
 }

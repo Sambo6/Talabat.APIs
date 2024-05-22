@@ -10,11 +10,12 @@ using Talabat.Core.Entities;
 
 namespace Talabat.Infrastructure
 {
-    internal class SpecificationEvaluator<TEntity> where TEntity : BaseEntity
+    internal static class SpecificationEvaluator<T> where T : BaseEntity
     {
-        public static IQueryable<TEntity>  GetQuery(IQueryable<TEntity> inputQuery, ISpecifications<TEntity> spec)
+        public static IQueryable<T> GetQuery(IQueryable<T> inputQuery, ISpecifications<T> spec)
         {
             var query = inputQuery;
+
             if (spec.Criteria != null)
                 query = query.Where(spec.Criteria);
 

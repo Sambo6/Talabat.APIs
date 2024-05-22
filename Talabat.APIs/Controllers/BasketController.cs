@@ -7,8 +7,6 @@ using Talabat.Core.Repositories.Contract;
 
 namespace Talabat.APIs.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class BasketController : BaseApiController
     {
         private readonly IBasketRepository _basketRepository;
@@ -24,17 +22,23 @@ namespace Talabat.APIs.Controllers
         public async Task<ActionResult<CustomerBasket>> GetBasket(string id)
         {
             var basket = await _basketRepository.GetBasketAsync(id);
+
             return Ok(basket ?? new CustomerBasket(id));
         }
 
         [HttpPost] //POST : /api/basket
         public async Task<ActionResult<CustomerBasket>> UpdateBasket(CustomerBasketDto basket)
         {
-            var mappedBasket = _mapper.Map<CustomerBasketDto, CustomerBasket>(basket);
-            var createdOrUpdatedBasket = await _basketRepository.UpdateBasketAsync(mappedBasket);
-            if (createdOrUpdatedBasket is null) { return BadRequest(new ApiResponse(400)); }
+            var mapedBasket = _mapper.Map<CustomerBasket>(basket);
+
+            var createdOrUpdatedBasket = await _basketRepository.UpdateBasketAsync(mapedBasket);
+
+            if (createdOrUpdatedBasket is null) return BadRequest(new ApiResponse(400));
+
             return Ok(createdOrUpdatedBasket);
         }
+
+
         [HttpDelete] //DELETE : /api/basket?id
         public async Task DeleteBasket(string id)
         {

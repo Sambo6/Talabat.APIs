@@ -5,12 +5,15 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Talabat.APIs.Errors;
 using Talabat.APIs.Helpers;
+using Talabat.APIs.Middleware;
+using Talabat.Application.OrderService;
 using Talabat.Core;
 using Talabat.Core.Repositories.Contract;
 using Talabat.Core.Services.Contract;
 using Talabat.Infrastructure;
 using Talabat.Repository;
 using Talabat.Service.AuthService;
+using Talabat.Service.ProductService;
 
 namespace Talabat.APIs.Extensions
 {
@@ -18,22 +21,27 @@ namespace Talabat.APIs.Extensions
     {
         public static IServiceCollection ApplicationServices(this IServiceCollection services)
         {
+            services.AddScoped<IProductService, ProductService>();
+
+            services.AddScoped<IOrderService, OrderService>();
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            //For All [Product- productBrand- productCategory]
-            //services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-
-
-            services.AddScoped(typeof(IBasketRepository), typeof(BasketRepository));
+            services.AddScoped<IBasketRepository, BasketRepository>();
 
             services.AddAutoMapper(typeof(MappingProfiles));
+
+            services.AddScoped<ExceptionMiddleware>();
+
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.InvalidModelStateResponseFactory = (actionContext) =>
                 {
-                    var errors = actionContext.ModelState.Where(p => p.Value.Errors.Count > 0)
-                                                         .SelectMany(p => p.Value.Errors)
-                                                         .Select(e => e.ErrorMessage).ToList();
+                    var errors = actionContext.ModelState
+                                                        .Where(p => p.Value.Errors.Count > 0)
+                                                        .SelectMany(p => p.Value.Errors)
+                                                        .Select(e => e.ErrorMessage)
+                                                        .ToList();
                     var response = new ApiValidationErrorResponse()
                     {
                         Errors = errors
@@ -47,12 +55,12 @@ namespace Talabat.APIs.Extensions
 
         public static IServiceCollection AddAuthServices(this IServiceCollection services,IConfiguration configuration)
         {
+             
 			services.AddAuthentication(Options =>
 			{
 				Options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
 				Options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-			})
-				.AddJwtBearer(Options =>
+			}).AddJwtBearer(Options =>
 				{
 					Options.TokenValidationParameters = new TokenValidationParameters()
 					{

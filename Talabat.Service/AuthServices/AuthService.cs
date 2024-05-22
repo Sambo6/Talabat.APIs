@@ -27,6 +27,7 @@ namespace Talabat.Service.AuthService
 
 			};
 			var userRoles = await userManager.GetRolesAsync(user);
+
 			foreach (var role in userRoles)
 			{
 				authClaims.Add(new Claim(ClaimTypes.Role, role));

@@ -26,7 +26,7 @@ namespace Talabat.Repository
             ///if (typeof(T) == typeof(Product))
             ///    return (IEnumerable<T>)await _dbContext.Set<Product>().Include(p => p.Brand).Include(p => p.Category).ToListAsync();
 
-            return await _dbContext.Set<T>().ToListAsync();
+            return await _dbContext.Set<T>().AsNoTracking().ToListAsync();
         }
 
         public async Task<T?> GetAsync(int id)
@@ -46,16 +46,16 @@ namespace Talabat.Repository
         {
             return await ApplySpecifications(spec).FirstOrDefaultAsync();
         }
+        private IQueryable<T> ApplySpecifications(ISpecifications<T> spec)
+        {
+            return SpecificationEvaluator<T>.GetQuery(_dbContext.Set<T>(), spec);
+        }
 
         public async Task<int> GetCountAsync(ISpecifications<T> spec)
         {
             return await ApplySpecifications(spec).CountAsync();
         }
 
-        private IQueryable<T> ApplySpecifications(ISpecifications<T> spec)
-        {
-            return SpecificationEvaluator<T>.GetQuery(_dbContext.Set<T>(), spec);
-        }
         public void Add(T entity)
             => _dbContext.Set<T>().Add(entity);
 

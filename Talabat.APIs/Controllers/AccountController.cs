@@ -11,10 +11,8 @@ using Talabat.Core.Services.Contract;
 
 namespace Talabat.APIs.Controllers
 {
-	[Route("api/[controller]")]
-	[ApiController]
-	public class AccountController : ControllerBase
-	{
+	public class AccountController : BaseApiController
+    {
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly SignInManager<ApplicationUser> _signInManager;
 		private readonly IAuthService _authService;
@@ -30,83 +28,94 @@ namespace Talabat.APIs.Controllers
 			_mapper = mapper;
 		}
 		[HttpPost("login")] //POST : /api/Account/login 
-		public async Task<ActionResult<UserDto>> Login(LoginDto model)
-		{
-			var user = await _userManager.FindByEmailAsync(model.Email);
-			if (user == null)
-			{
-				return Unauthorized(new ApiResponse(401, "Invalid login"));
-			}
-			var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
-			if (!result.Succeeded)
-				return Unauthorized(new ApiResponse(401, "Invalid login"));
-			return Ok(new UserDto()
-			{
-				Email = user.Email,
-				DisplayName = user.DisplayName,
-				Token = await _authService.CreateTokenAsync(user, _userManager)
-			});
-		}
+        public async Task<ActionResult<UserDto>> Login(LoginDto model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
 
-		[HttpPost("register")]
-		public async Task<ActionResult<UserDto>> Register(RegisterDto model)
-		{
-			var user = new ApplicationUser()
-			{
-				DisplayName = model.DisplayName,
-				Email = model.Email,
-				PhoneNumber = model.Phone,
-				UserName = model.Email.Split("@")[0],
-			};
-			var result = await _userManager.CreateAsync(user, model.Password);
-			if (!result.Succeeded)
-				return BadRequest(new ApiValidationErrorResponse() { Errors = result.Errors.Select(E => E.Description) });
-			return Ok(new UserDto()
-			{
-				DisplayName = user.DisplayName,
-				Email = user.Email,
-				Token = await _authService.CreateTokenAsync(user, _userManager)
-			});
-		}
+            if (user == null)
+                return Unauthorized(new ApiResponse(401, "invalid login"));
 
-		[Authorize]
-		[HttpGet]
-		public async Task<ActionResult<UserDto>> GetCurrentUser()
-		{
-			var email = User.FindFirstValue(ClaimTypes.Email) ?? string.Empty;
-			var user = await _userManager.FindByEmailAsync(email);
-			return Ok(new UserDto()
-			{
-				DisplayName = user?.DisplayName ?? string.Empty,
-				Email = user?.Email ?? string.Empty,
-				Token = await _authService.CreateTokenAsync(user, _userManager)
+            var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
 
-			});
-		}
-		[Authorize]
-		[HttpGet("address")]
-		public async Task<ActionResult<AddressDto>> GetUserAddress()
-		{
+            if (!result.Succeeded)
+                return Unauthorized(new ApiResponse(401, "invalid login"));
 
-			var user = await _userManager.FindUserWithAddressAsync(User);
-			return Ok(_mapper.Map<AddressDto>(user.Address));
-		}
-		[Authorize]
-		[HttpPut("address")]
-		public async Task<ActionResult<Address>> UpdateUserAddress(AddressDto address)
-		{
-			var updatedAddress = _mapper.Map<Address>(address);
-			var user = await _userManager.FindUserWithAddressAsync(User);
+            return Ok(new UserDto()
+            {
+                DisplayName = user.DisplayName,
+                Email = user.Email,
+                Token = await _authService.CreateTokenAsync(user, _userManager)
+            });
+        }
 
-			updatedAddress.Id = user.Address.Id;
-			user.Address = updatedAddress;
+        [HttpPost("register")]
+        public async Task<ActionResult<UserDto>> Register(RegisterDto model)
+        {
+            var user = new ApplicationUser()
+            {
+                DisplayName = model.DisplayName,
+                Email = model.Email,
+                UserName = model.Email.Split('@')[0],
+                PhoneNumber = model.Phone
+            };
 
-			var result = await _userManager.UpdateAsync(user);
-			if (!result.Succeeded)
-				return BadRequest(new ApiValidationErrorResponse() 
-				{ Errors = result.Errors.Select(E => E.Description) });
+            var result = await _userManager.CreateAsync(user, model.Password);
 
-			return Ok(address);
-		}
-	}
+            if (!result.Succeeded)
+                return BadRequest(new ApiValidationErrorResponse() { Errors = result.Errors.Select((E) => E.Description) });
+
+            return Ok(new UserDto()
+            {
+                DisplayName = user.DisplayName,
+                Email = user.Email,
+                Token = await _authService.CreateTokenAsync(user, _userManager)
+            });
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult<UserDto>> GetCurrentUser()
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            return Ok(new UserDto()
+            {
+                DisplayName = user?.DisplayName ?? string.Empty,
+                Email = user?.Email ?? string.Empty,
+                Token = await _authService.CreateTokenAsync(user, _userManager)
+            });
+        }
+
+        [Authorize]
+        [HttpGet("address")]
+        public async Task<ActionResult<AddressDto>> GetUserAddress()
+        {
+            var user = await _userManager.FindUserWithAddressAsync(User);
+
+            return Ok(_mapper.Map<AddressDto>(user.Address));
+        }
+
+
+        [Authorize]
+        [HttpPut("address")]
+        public async Task<ActionResult<AddressDto>> UpdateUserAddress(AddressDto address)
+        {
+            var updatedAddress = _mapper.Map<Address>(address);
+
+            var user = await _userManager.FindUserWithAddressAsync(User);
+
+            //if (user.Address?.Id is not null)
+            updatedAddress.Id = user.Address.Id;
+
+            user.Address = updatedAddress;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded) return BadRequest(new ApiValidationErrorResponse() { Errors = result.Errors.Select(E => E.Description) });
+
+            return Ok(address);
+        }
+    }
 }

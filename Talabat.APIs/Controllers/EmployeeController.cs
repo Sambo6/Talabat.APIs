@@ -7,8 +7,6 @@ using Talabat.Core.Specifications.Employee_Spec;
 
 namespace Talabat.APIs.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class EmployeeController : BaseApiController
     {
 

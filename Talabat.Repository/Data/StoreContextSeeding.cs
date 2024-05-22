@@ -24,7 +24,8 @@ namespace Talabat.Repository.Data
                 {
                     foreach (var Brand in brands)
                     {
-                        _dbContext.Set<ProductBrand>().Add(Brand);
+                        Brand.Id = 0;
+                        await _dbContext.AddAsync(Brand);
                     }
                     await _dbContext.SaveChangesAsync();
                 }
@@ -40,9 +41,10 @@ namespace Talabat.Repository.Data
                 if (categories?.Count > 0)
                 {
 
-                    foreach (var category in categories)
+                    foreach (var Category in categories)
                     {
-                        _dbContext.Set<ProductCategory>().Add(category);
+                        Category.Id = 0;
+                        await _dbContext.AddAsync(Category);
                     }
                     await _dbContext.SaveChangesAsync();
                 }
@@ -57,9 +59,10 @@ namespace Talabat.Repository.Data
 
                 if (products?.Count > 0)
                 {
-                    foreach (var product in products)
+                    foreach (var Product in products)
                     {
-                        _dbContext.Set<Product>().Add(product);
+                        Product.Id = 0;
+                        await _dbContext.AddAsync(Product);
                     }
                     await _dbContext.SaveChangesAsync();
                 }
@@ -77,7 +80,8 @@ namespace Talabat.Repository.Data
                 {
                     foreach (var deliveryMethod in deliveryMethods)
                     {
-                        _dbContext.Set<DeliveryMethod>().Add(deliveryMethod);
+                        deliveryMethod.Id = 0;
+                        await _dbContext.AddAsync(deliveryMethod);
                     }
                     await _dbContext.SaveChangesAsync();
                 }

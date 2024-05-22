@@ -10,7 +10,6 @@ namespace Talabat.Core.Entities
     public class CustomerBasket
     {
         //For  FrondEnd [Guid]
-
         public string Id { get; set; } = null!;
         public List<BasketItem> Items{ get; set; } = null!;
         public CustomerBasket(string id)
