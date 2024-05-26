@@ -10,13 +10,14 @@ namespace Talabat.Core.Entities.Order_Aggregate
 	public class Order : BaseEntity
 	{
 		private Order() {} // Must Create Parameterliess ctor for EF Core [Migration]
-		public Order(string buyerEmail, Address shippingAddress, int? deliveryMethodId, ICollection<OrderItem> items, decimal subtotal)
+		public Order(string buyerEmail, Address shippingAddress, int? deliveryMethodId, ICollection<OrderItem> items, decimal subtotal,string paymentIntentId)
 		{
 			BuyerEmail = buyerEmail;
 			ShippingAddress = shippingAddress;
 			DeliveryMethodId= deliveryMethodId;
 			Items = items;
 			Subtotal = subtotal;
+			PaymentIntentId = paymentIntentId;
 		}
 
 		public string BuyerEmail { get; set; } = null!;
