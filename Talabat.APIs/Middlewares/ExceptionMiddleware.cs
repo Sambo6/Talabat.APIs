@@ -21,13 +21,15 @@ namespace Talabat.APIs.Middleware
         
 
         public async Task InvokeAsync(HttpContext httpContext, RequestDelegate _next)
-        {       //take an action with the request
+        { 
+            //take an action with the request
             try
             {   
                 await _next.Invoke(httpContext); 
                 // Go to next middleware
                 //take an action with the response
             }
+            //take an action with the response
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message); // Development env

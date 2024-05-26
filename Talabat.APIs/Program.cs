@@ -2,9 +2,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using StackExchange.Redis;
-using System.Net;
-using System.Text.Json;
-using Talabat.APIs.Errors;
 using Talabat.APIs.Extensions;
 using Talabat.APIs.Middleware;
 using Talabat.Core.Entities.Identity;
@@ -13,7 +10,7 @@ using Talabat.Repository.Data;
 
 namespace Talabat.APIs
 {
-	public class Program
+    public class Program
 	{
 		//Entry point
 		public static async Task Main(string[] args)
@@ -51,8 +48,7 @@ namespace Talabat.APIs
                 return ConnectionMultiplexer.Connect(connection);
             });
 
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-							.AddEntityFrameworkStores<ApplicationIdentityDbContext>();
+
 
 
 			builder.Services.AddAuthServices(builder.Configuration);
