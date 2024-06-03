@@ -7,6 +7,7 @@ using System.Text;
 using Talabat.APIs.Errors;
 using Talabat.APIs.Helpers;
 using Talabat.APIs.Middleware;
+using Talabat.Application.CacheServices;
 using Talabat.Application.OrderService;
 using Talabat.Application.PaymentService;
 using Talabat.Core;
@@ -27,6 +28,8 @@ namespace Talabat.APIs.Extensions
         {
             services.AddScoped<IPaymentService , PaymentService>();
             services.AddScoped<IProductService, ProductService>();
+
+            services.AddSingleton<IResponseCacheService, ResponseCacheService>();
 
             services.AddScoped<IOrderService, OrderService>();
 
