@@ -56,7 +56,7 @@ namespace Talabat.APIs.Helpers
             //pageIndex = 1 &
             //pageSize = 5 &
             //sort = name
-            foreach (var (key,value) in request.Query)
+            foreach (var (key,value) in request.Query.OrderBy(x => x.Key))
             {
                 //BaseUrl/api/products|pageIndex - 1
                 keyBuilder.Append($"| {key}-{value}");
