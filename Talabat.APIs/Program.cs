@@ -77,7 +77,7 @@ namespace Talabat.APIs
             try
             {
                 await _dbContext.Database.MigrateAsync();
-                await StoreContextSeeding.SeedAsync(_dbContext);
+                await StoreContextSeed.SeedAsync(_dbContext);
 
                 await _identityDbContext.Database.MigrateAsync();
 

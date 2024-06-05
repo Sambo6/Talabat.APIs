@@ -31,13 +31,12 @@ namespace Talabat.APIs.Controllers
         public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProducts([FromQuery] ProductSpecParams specParams)
         {
             var products = await _productService.GetProductsAsync(specParams);
-
-            var count = await _productService.GetCountAsync(specParams);
-
             var data = _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products);
-
+            var count = await _productService.GetCountAsync(specParams);
             return Ok(new Pagination<ProductToReturnDto>(specParams.PageIndex, specParams.PageSize, count, data));
-        } 
+        }
+        [ProducesResponseType(typeof(ProductToReturnDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         #endregion
 
 
