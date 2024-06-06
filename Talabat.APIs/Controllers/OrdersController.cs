@@ -30,13 +30,13 @@ namespace Talabat.APIs.Controllers
         {
             var address = _mapper.Map<Address>(orderDto.ShippingAddress);
 
-            var email = User.FindFirst(ClaimTypes.Email).Value;
+            var buyerEmail = User.FindFirstValue(ClaimTypes.Email);
 
-            var order = await _orderService.CreateOrderAsync(orderDto.BasketId, orderDto.DeliveryMethodId, address, email);
+            var order = await _orderService.CreateOrder(buyerEmail, orderDto.BasketId, orderDto.DeliveryMethodId, address); ;
 
-            if (order is null) return BadRequest(new ApiResponse(404));
+            if (order is null) return BadRequest(new ApiResponse(400));
 
-            return Ok(_mapper.Map<OrderToReturnDto>(order));
+            return Ok(_mapper.Map<Order,OrderToReturnDto>(order));
         }
 
         [HttpGet]
@@ -47,7 +47,7 @@ namespace Talabat.APIs.Controllers
 
             var orders = await _orderService.GetOrdersForUserAsync(email);
 
-            return Ok(_mapper.Map<IReadOnlyList<OrderToReturnDto>>(orders));
+            return Ok(_mapper.Map<IReadOnlyList<Order>, IReadOnlyList<OrderToReturnDto>>(orders));
         }
 
         [ProducesResponseType(typeof(OrderToReturnDto), StatusCodes.Status200OK)]

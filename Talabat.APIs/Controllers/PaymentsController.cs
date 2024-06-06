@@ -14,7 +14,7 @@ namespace Talabat.APIs.Controllers
     {
         private readonly IPaymentService _paymentService;
         private readonly ILogger<PaymentsController> _logger;
-        private const string endpointSecret = "whsec_e024ecb3cd9c99d99e82be07f135f9f38824610d9626e8f8791fab61ecd136a8";
+        private const string whSecret = "whsec_cfba1ce98d64f0733d6d06c3cc6d7a4ceb2f4274846a769d05c108116a8d13bc";
         public PaymentsController(IPaymentService paymentService,
             ILogger<PaymentsController> logger)
         {
@@ -38,7 +38,8 @@ namespace Talabat.APIs.Controllers
         public async Task<IActionResult> WebHook()
         {
             var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-            var stripeEvent = EventUtility.ConstructEvent(json,Request.Headers["Stripe-Signature"], endpointSecret);
+            var stripeEvent = EventUtility.ConstructEvent(json,
+                Request.Headers["Stripe-Signature"], whSecret);
 
             Order? order;
 
@@ -49,11 +50,14 @@ namespace Talabat.APIs.Controllers
                 case Events.PaymentIntentSucceeded:
                     order = await _paymentService.UpdateOrderStatus(paymentIntent.Id, true);
                     _logger.LogInformation($"Order is succeeded {order?.PaymentIntentId}");
+                    _logger.LogInformation($"Unhandled event type: {stripeEvent.Type}");
+
                     break;
 
                 case Events.PaymentIntentPaymentFailed:
                     order = await _paymentService.UpdateOrderStatus(paymentIntent.Id, false);
                     _logger.LogInformation($"Order is failed {order?.PaymentIntentId}");
+
                     break;
 
             }
